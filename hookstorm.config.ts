@@ -1,8 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { atMostOnce, custom, defineConfig, exactlyOnce, finalState } from 'hookstorm-cli';
+import { atMostOnce, custom, defineConfig, eventsTakeEffect, exactlyOnce, finalState } from 'hookstorm-cli';
 
-// Hookstorm doesn't read .env, so load it here: the secret below must be the one the app verifies with.
-if (existsSync('.env')) process.loadEnvFile('.env');
+// `hookstorm run` loads .env next to this file (0.2+), so the secret and PORT below match the app's.
 
 // Guide: https://github.com/vyktoremario/hookstorm/blob/main/docs/guide-your-own-receiver.md
 //
@@ -40,8 +39,18 @@ export default defineConfig({
   reset: '/hookstorm/reset',
   probe: '/hookstorm/state',
   eventKey: orderIdOf,
+  // Stripe sends these too; the app doesn't act on them. Still delivered with faults, just not shown in timelines.
+  ignoredEventTypes: ['payment_intent.created', 'charge.succeeded', 'charge.updated', 'refund.created'],
 
   invariants: [
+    // Guards the test itself: an acknowledged payment or refund that changed nothing means it wasn't tested.
+    eventsTakeEffect({
+      forEachEvent: ['payment_intent.succeeded', 'charge.refunded'],
+      eventKey: orderIdOf,
+      record: (state, id) => state.orders.find((o: any) => o.id === id),
+      description: 'every acknowledged payment or refund changes its order',
+    }),
+
     atMostOnce('email.receipts', (c) => c.body.orderId, 'each order gets at most one receipt'),
 
     exactlyOnce('email.receipts', (c) => c.body.orderId, {

@@ -33,7 +33,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",
-    "hookstorm-cli": "^0.1.1",
+    "hookstorm-cli": "^0.2.0",
     "typescript": "^6.0.3"
   }
 }
