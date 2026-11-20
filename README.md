@@ -52,10 +52,10 @@ npx hookstorm run          # terminal 2
    ```
 5. Make a few purchases and refund one:
    ```bash
-   curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-afrobeats-night","quantity":2,"email":"ada@example.com"}'
-   curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-jazz-brunch","email":"bola@example.com"}'
-   curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-afrobeats-night","quantity":4,"email":"chidi@example.com"}'
-   curl -s -X POST localhost:3000/orders/<ada's order id>/refund
+   ADA=$(curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-afrobeats-night","quantity":2,"email":"ada@example.com"}' | node -pe 'JSON.parse(require("fs").readFileSync(0)).id') && echo "Ada's order: $ADA"
+   curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-jazz-brunch","email":"bola@example.com"}'; echo
+   curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-afrobeats-night","quantity":4,"email":"chidi@example.com"}'; echo
+   curl -s -X POST "localhost:3000/orders/$ADA/refund"; echo
    ```
 6. Wait a few seconds for the last events, then stop the recorder (Ctrl+C) and `stripe listen`.
 7. Save the orders those events refer to, so every replay starts from the same "before the webhooks" state:
