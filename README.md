@@ -38,8 +38,10 @@ npx hookstorm run          # terminal 2
 1. `cp .env.example .env` and set `STRIPE_SECRET_KEY` to your **test** secret key (`sk_test_…`).
 2. Terminal 1: forward Stripe's events to Hookstorm's recorder. Copy the `whsec_…` it prints into `.env` as `STRIPE_WEBHOOK_SECRET`.
    ```bash
-   stripe listen --forward-to localhost:4500
+   stripe listen --forward-to localhost:4500 \
+     --events payment_intent.created,payment_intent.succeeded,charge.succeeded,charge.updated,charge.refunded,refund.created
    ```
+   Newer Stripe CLI versions require an event list. These are the classic ("snapshot") events this flow produces. The app handles two of them and ignores the rest, as a real endpoint would. `--all-snapshot` also works but records everything on the account. Don't use `--all-thin`: thin events have a different shape that this handler doesn't parse.
 3. Terminal 2: record each event, passing it on to the app unchanged:
    ```bash
    npx hookstorm record --provider stripe --port 4500 --forward http://127.0.0.1:3000/webhooks/stripe -o hookstorm/events.jsonl
