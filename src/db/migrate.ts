@@ -7,6 +7,10 @@ async function main() {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
   await client.query(readFileSync(join(__dirname, '../../src/db/schema.sql'), 'utf8'));
+  if (process.argv.includes('--reset')) {
+    // Start from an empty shop: no orders, full stock. Used before recording real Stripe events.
+    await client.query('TRUNCATE ledger_entries, orders, products');
+  }
   const products = JSON.parse(readFileSync(join(__dirname, '../../src/db/products.json'), 'utf8'));
   for (const p of products)
     await client.query(
@@ -14,7 +18,7 @@ async function main() {
       [p.id, p.name, p.price, p.stock],
     );
   await client.end();
-  console.log('migrated');
+  console.log(process.argv.includes('--reset') ? 'reset and migrated' : 'migrated');
 }
 
 main().catch((e) => {

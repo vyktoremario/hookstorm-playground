@@ -46,9 +46,9 @@ npx hookstorm run          # terminal 2
    ```bash
    npx hookstorm record --provider stripe --port 4500 --forward http://127.0.0.1:3000/webhooks/stripe -o hookstorm/events.jsonl
    ```
-4. Terminal 3: the app.
+4. Terminal 3: start from an empty shop, then run the app. Stop any `npm run dev:hookstorm` first: the app needs port 3000, and that mode doesn't call Stripe.
    ```bash
-   npm run db:migrate && npm run dev
+   npm run db:reset && npm run dev
    ```
 5. Make a few purchases and refund one:
    ```bash

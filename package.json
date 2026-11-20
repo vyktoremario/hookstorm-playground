@@ -14,7 +14,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "hookstorm:export-seed": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/hookstorm/export-seed.js",
     "dev:hookstorm": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/hookstorm/serve.js",
-    "storm": "hookstorm run"
+    "storm": "hookstorm run",
+    "db:reset": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/db/migrate.js --reset"
   },
   "engines": {
     "node": ">=22.12"
