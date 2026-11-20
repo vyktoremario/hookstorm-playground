@@ -28,7 +28,7 @@ const orderIdOf = (event: { json: any }): string | undefined => {
 };
 
 export default defineConfig({
-  target: 'http://127.0.0.1:3000/webhooks/stripe',
+  target: `http://127.0.0.1:${process.env.PORT ?? 3000}/webhooks/stripe`, // same PORT as the app (.env)
   provider: 'stripe',
   // The same whsec_ secret the app verifies with (STRIPE_WEBHOOK_SECRET). Test mode only.
   secret: process.env.STRIPE_WEBHOOK_SECRET ?? 'whsec_local_dev',

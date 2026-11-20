@@ -50,7 +50,7 @@ npx hookstorm run          # terminal 2
    ```bash
    npm run db:reset && npm run dev
    ```
-5. Make a few purchases and refund one:
+5. Make a few purchases and refund one. These commands assume port 3000; if `.env` sets another `PORT`, use that in every URL here and in step 3's `--forward`.
    ```bash
    ADA=$(curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-afrobeats-night","quantity":2,"email":"ada@example.com"}' | node -pe 'JSON.parse(require("fs").readFileSync(0)).id') && echo "Ada's order: $ADA"
    curl -s localhost:3000/checkout -H 'content-type: application/json' -d '{"productId":"gig-jazz-brunch","email":"bola@example.com"}'; echo
