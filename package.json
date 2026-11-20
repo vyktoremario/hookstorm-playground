@@ -1,0 +1,38 @@
+{
+  "name": "hookstorm-playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A small NestJS + Postgres ticket shop with Stripe webhooks, used to dogfood Hookstorm.",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "dev": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/main.js",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down -v",
+    "db:migrate": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/db/migrate.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "hookstorm:export-seed": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/hookstorm/export-seed.js",
+    "dev:hookstorm": "tsc -p tsconfig.json && node --env-file-if-exists=.env dist/hookstorm/serve.js",
+    "storm": "hookstorm run"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.6.0",
+    "@nestjs/core": "^12.6.0",
+    "@nestjs/platform-express": "^12.6.0",
+    "pg": "^8.23.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "stripe": "^23.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "hookstorm-cli": "^0.1.1",
+    "typescript": "^6.0.3"
+  }
+}

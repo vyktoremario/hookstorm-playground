@@ -1,0 +1,28 @@
+{
+  "orders": [
+    {
+      "id": "0b0f3c1e-1a11-4c1e-9a01-000000000001",
+      "product_id": "gig-afrobeats-night",
+      "quantity": 2,
+      "amount": 5000,
+      "customer_email": "ada@example.com",
+      "payment_intent_id": "pi_sample_ada"
+    },
+    {
+      "id": "0b0f3c1e-1a11-4c1e-9a01-000000000002",
+      "product_id": "gig-jazz-brunch",
+      "quantity": 1,
+      "amount": 4000,
+      "customer_email": "bola@example.com",
+      "payment_intent_id": "pi_sample_bola"
+    },
+    {
+      "id": "0b0f3c1e-1a11-4c1e-9a01-000000000003",
+      "product_id": "gig-afrobeats-night",
+      "quantity": 4,
+      "amount": 10000,
+      "customer_email": "chidi@example.com",
+      "payment_intent_id": "pi_sample_chidi"
+    }
+  ]
+}

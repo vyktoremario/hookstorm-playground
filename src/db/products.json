@@ -1,0 +1,4 @@
+[
+  { "id": "gig-afrobeats-night", "name": "Afrobeats Night: general admission", "price": 2500, "stock": 100 },
+  { "id": "gig-jazz-brunch", "name": "Sunday Jazz Brunch", "price": 4000, "stock": 40 }
+]
