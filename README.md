@@ -14,7 +14,14 @@ The first version of the webhook handler was written the way a careful-but-typic
 | `hostile`, 30 seeds | 29/30 seeds broke 5 of 6 rules | all held |
 | `hostile`, 200 seeds | not run | all held (9,215 delivery attempts) |
 
-To see the bugs yourself: `git checkout before-fix`, then `npm run db:reset`, then `npm run dev:hookstorm` and `npx hookstorm run`.
+To see the bugs yourself, switch to the old code with a fresh database (the fixed schema has tables the old code doesn't know about):
+
+```bash
+git checkout before-fix && npm run db:down && npm run db:up && npm run db:migrate
+npm run dev:hookstorm     # then, in another terminal: npx hookstorm run
+```
+
+Come back with `git checkout main` and the same database commands.
 
 ## Run it
 
