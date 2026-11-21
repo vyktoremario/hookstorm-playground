@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DatabaseService } from './db/database.service';
 import { EmailService } from './email/email.service';
+import { OutboxService } from './email/outbox.service';
 import { HookstormController } from './hookstorm/hookstorm.controller';
 import { OrdersController } from './orders/orders.controller';
 import { OrdersService } from './orders/orders.service';
@@ -11,6 +12,6 @@ const testOnly = process.env.HOOKSTORM === '1' ? [HookstormController] : [];
 
 @Module({
   controllers: [OrdersController, StripeWebhookController, ...testOnly],
-  providers: [DatabaseService, EmailService, OrdersService, stripeProvider],
+  providers: [DatabaseService, EmailService, OutboxService, OrdersService, stripeProvider],
 })
 export class AppModule {}

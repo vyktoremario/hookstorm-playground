@@ -31,7 +31,7 @@ export class HookstormController {
     const seedPath = join(root, recorded ? 'hookstorm/seed.json' : 'hookstorm/sample/seed.json');
     const orders: SeedOrder[] = JSON.parse(readFileSync(seedPath, 'utf8')).orders;
     await this.db.transaction(async (tx) => {
-      await tx.query('TRUNCATE ledger_entries, orders');
+      await tx.query('TRUNCATE email_outbox, processed_events, ledger_entries, orders');
       for (const p of products) await tx.query('UPDATE products SET stock = $1 WHERE id = $2', [p.stock, p.id]);
       for (const o of orders)
         await tx.query(

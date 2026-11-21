@@ -26,10 +26,10 @@ export class StripeWebhookController {
 
     switch (event.type) {
       case 'payment_intent.succeeded':
-        await this.orders.markPaid(event.data.object);
+        await this.orders.markPaid(event, event.data.object);
         break;
       case 'charge.refunded':
-        await this.orders.markRefunded(event.data.object);
+        await this.orders.markRefunded(event, event.data.object);
         break;
       default:
         this.logger.debug(`ignoring ${event.type}`);

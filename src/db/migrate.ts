@@ -6,11 +6,11 @@ import { Client } from 'pg';
 async function main() {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
-  await client.query(readFileSync(join(__dirname, '../../src/db/schema.sql'), 'utf8'));
   if (process.argv.includes('--reset')) {
     // Start from an empty shop: no orders, full stock. Used before recording real Stripe events.
-    await client.query('TRUNCATE ledger_entries, orders, products');
+    await client.query('DROP TABLE IF EXISTS email_outbox, processed_events, ledger_entries, orders, products CASCADE');
   }
+  await client.query(readFileSync(join(__dirname, '../../src/db/schema.sql'), 'utf8'));
   const products = JSON.parse(readFileSync(join(__dirname, '../../src/db/products.json'), 'utf8'));
   for (const p of products)
     await client.query(

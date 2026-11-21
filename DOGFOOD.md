@@ -1,5 +1,7 @@
 # Dogfooding Hookstorm on the ticket shop
 
+> **Status:** both bugs below are fixed (see "Before and after the fix"). Friction points 1–8 were addressed in hookstorm-cli 0.2.0.
+
 Hookstorm 0.1.1 from npm, run against this app with hand-written Stripe-shaped events (3 orders, 1 refund, 10 events including types the app ignores). All 5 rules are listed in the README.
 
 ## Bugs Hookstorm found in the app
@@ -47,6 +49,26 @@ Recorded from Stripe test mode with `stripe listen` → `hookstorm record`: 3 ch
 ```
 
 "A refunded order stays refunded" (bug 1) didn't fail in these 20 seeds. It needs the payment retry to land after the refund, which the sample events hit more often. A wider seed range or `--profile hostile` brings it back.
+
+## Before and after the fix
+
+Same real Stripe recording (14 events: 3 checkouts, 1 refund), same seeds, hookstorm-cli 0.2.0, 6 rules including `eventsTakeEffect`. The buggy version is tagged `before-fix`.
+
+| Run                                    | Before (`before-fix`)            | After                          |
+| -------------------------------------- | -------------------------------- | ------------------------------ |
+| `realistic`, seeds 1–50                | **24/50 seeds** broke 5 of 6 rules | all rules held, 50/50          |
+| `hostile`, seeds 100–129               | **29/30 seeds** broke 5 of 6 rules | all rules held, 30/30          |
+| seed 4 × 20 (`--repeat-seed 20`)       | **20/20 runs** (19/20 on an earlier run) | all rules held, 20/20    |
+| `hostile`, seeds 1000–1199             | not run                          | all rules held, 200/200 (9,215 delivery attempts, 305 s) |
+
+No run in the "after" column raised a warning, so every pass exercised real changes to the orders.
+
+What changed (see `git diff before-fix`):
+
+1. **Apply each Stripe event at most once.** The event id goes into `processed_events` in the same transaction as the event's effects. A concurrent duplicate blocks on the primary key until the first transaction commits, then inserts nothing and skips. This fixes the double payment (bug 2).
+2. **At most one payment and one refund per order,** enforced by a unique index on `ledger_entries (order_id, type)`, with the order row locked (`FOR UPDATE`) while it's updated. This holds even if Stripe sent two different events for the same payment.
+3. **Status only moves forward.** A payment that arrives after its refund records the money and takes the tickets out of stock (the refund already put them back), but leaves the order `refunded`. This fixes the payment processed again after a refund (bug 1).
+4. **Receipts go through an outbox** written in the payment's transaction and sent after it commits, at most one per order, retried on failure. The webhook no longer waits on the email API, and a failing email API can no longer cause a 500 that loses the receipt.
 
 ## Friction in Hookstorm (things to improve)
 

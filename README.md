@@ -6,7 +6,15 @@ A small NestJS + Postgres ticket shop that takes payments with **Stripe (test mo
 - `POST /orders/:id/refund` refunds it through Stripe.
 - `POST /webhooks/stripe` handles `payment_intent.succeeded` (mark paid, take tickets out of stock, write a ledger entry, email a receipt) and `charge.refunded` (mark refunded, restock, write a refund entry).
 
-The webhook handler is written the way a careful-but-typical first version looks: it checks the order status and uses a transaction. Hookstorm still finds two bugs in it; see [DOGFOOD.md](DOGFOOD.md).
+The first version of the webhook handler was written the way a careful-but-typical first version looks: it checked the order status and used a transaction. Hookstorm still found two bugs in it: an order paid twice by concurrent duplicate deliveries, and a payment processed again after its refund. Both are now fixed, and the version with the bugs is tagged `before-fix`. Before and after numbers are in [DOGFOOD.md](DOGFOOD.md):
+
+| Same recording, same seeds | Before | After |
+| --- | --- | --- |
+| `realistic`, 50 seeds | 24/50 seeds broke 5 of 6 rules | all held |
+| `hostile`, 30 seeds | 29/30 seeds broke 5 of 6 rules | all held |
+| `hostile`, 200 seeds | not run | all held (9,215 delivery attempts) |
+
+To see the bugs yourself: `git checkout before-fix`, then `npm run db:reset`, then `npm run dev:hookstorm` and `npx hookstorm run`.
 
 ## Run it
 
